@@ -1,0 +1,281 @@
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: #F4FBFF;
+}
+
+/* Top Navigation */
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #4DA8FF;
+  padding: 10px 20px;
+  color: white;
+}
+
+.left-nav {
+  display: flex;
+  align-items: center;
+}
+
+.menu-btn {
+  font-size: 22px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  margin-right: 12px;
+}
+
+.top-links a {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.top-links .active {
+  text-decoration: underline;
+}
+
+.back-btn {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* Side Navigation */
+.side-nav {
+  height: 100%;
+  width: 240px;
+  position: fixed;
+  top: 0;
+  left: -240px;
+  background: #2F80ED;
+  padding-top: 60px;
+  transition: 0.3s;
+}
+
+.side-nav a {
+  padding: 12px 20px;
+  display: block;
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.side-nav a:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 28px;
+}
+
+/* Profile Container */
+.profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+/* Avatar Section */
+.avatar-card {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  margin-bottom: 25px;
+}
+
+.avatar-card img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #4DA8FF;
+  margin-bottom: 15px;
+}
+
+.avatar-card h3 {
+  color: #333;
+  margin: 10px 0;
+  font-size: 24px;
+}
+
+.avatar-card p {
+  color: #666;
+  font-size: 16px;
+}
+
+/* Stats Section */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 25px;
+}
+
+.stat-box {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.stat-box h4 {
+  color: #555;
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.stat-box p {
+  color: #333;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Progress Card */
+.progress-card {
+  background: white;
+  border-radius: 20px;
+  padding: 25px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  margin-bottom: 25px;
+}
+
+.progress-card h3 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 22px;
+}
+
+.progress-item {
+  margin-bottom: 20px;
+}
+
+.progress-item:last-child {
+  margin-bottom: 0;
+}
+
+.progress-item span {
+  display: block;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.progress-bar {
+  height: 25px;
+  background: #F0F0F0;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 12px;
+  transition: width 0.5s ease;
+  position: relative;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, 
+    rgba(255,255,255,0.1) 0%, 
+    rgba(255,255,255,0.3) 50%, 
+    rgba(255,255,255,0.1) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Course Colors for Progress Bars */
+.progress-fill.math { background: linear-gradient(90deg, #6BCF9D, #4CAF80); }
+.progress-fill.word { background: linear-gradient(90deg, #FF9F43, #FF7B00); }
+.progress-fill.science { background: linear-gradient(90deg, #B39DDB, #9575CD); }
+.progress-fill.logic { background: linear-gradient(90deg, #FFD93D, #FFC107); }
+
+/* Motivation Message */
+.motivation {
+  background: linear-gradient(135deg, #4DA8FF, #6BCF9D);
+  color: white;
+  border-radius: 20px;
+  padding: 25px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(77, 168, 255, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .stats {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .top-nav {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+  }
+  
+  .avatar-card {
+    padding: 20px;
+  }
+  
+  .progress-card {
+    padding: 20px;
+  }
+  
+  .profile-container {
+    padding: 20px 15 px;
+  }
+}
+
+@media (max-width: 480px) {
+  .avatar-card img {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .stat-box {
+    padding: 15px;
+  }
+  
+  .stat-box p {
+    font-size: 24px;
+  }
+  
+  .motivation {
+    padding: 20px;
+    font-size: 16px;
+  }
+}

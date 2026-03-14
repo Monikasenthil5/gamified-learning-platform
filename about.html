@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>LearnFun | About Us</title>
+  <link rel="stylesheet" href="css/about.css">
+</head>
+<body>
+
+<div id="sideNav" class="side-nav">
+  <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">×</a>
+  <a href="home.html">🏠 Home</a>
+  <a href="courses.html">📘 Courses</a>
+  <a href="progress.html">📊 Progress</a>
+  <a href="profile.html">👤 Profile</a>
+  <a href="about.html">ℹ️ About Us</a>
+</div>
+
+<!-- Top Navigation -->
+<header class="top-nav">
+  <div class="left-nav">
+    <button class="menu-btn" onclick="toggleSideNav()">☰</button>
+    <h2>🎮 LearnFun</h2>
+  </div>
+
+  <nav class="top-links">
+    <a href="home.html">Home</a>
+    <a href="courses.html">Courses</a>
+    <a href="progress.html">Progress</a>
+    <a href="about.html">About</a>
+
+    <!-- Profile Icon -->
+    <a href="profile.html" class="profile-icon">👤</a>
+  </nav>
+</header>
+
+<!-- About Section -->
+<section class="about-container">
+
+  <h1>🌟 About LearnFun</h1>
+
+  <div class="about-card">
+    <h2>🎯 Our Mission</h2>
+    <p>
+      LearnFun is designed to make learning joyful, interactive, and meaningful
+      for children. We believe that education should feel like play, not pressure.
+    </p>
+  </div>
+
+  <div class="about-card">
+    <h2>📚 What We Offer</h2>
+    <ul>
+      <li>🎮 Game-based learning activities</li>
+      <li>🧠 Logic, Math, Science & Reading</li>
+      <li>📊 Progress tracking for parents</li>
+      <li>🌈 Child-friendly interface</li>
+    </ul>
+  </div>
+
+  <div class="about-card">
+    <h2>👨‍👩‍👧 For Parents</h2>
+    <p>
+      Parents can easily monitor their child’s learning progress, strengths,
+      and areas for improvement through simple visual reports.
+    </p>
+  </div>
+
+  <div class="about-card highlight">
+    <h2>💖 Why LearnFun?</h2>
+    <p>
+      Because every child learns better when they are happy, confident,
+      and curious!
+    </p>
+  </div>
+
+</section>
+
+<script>
+function toggleSideNav() {
+  document.getElementById("sideNav").style.width = "250px";
+}
+function closeNav() {
+  document.getElementById("sideNav").style.width = "0";
+}
+</script>
+
+</body>
+</html>

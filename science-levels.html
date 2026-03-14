@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>🔬 Science Space - Levels</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Firebase CDN -->
+  <script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js",
+      "firebase/database": "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js"
+    }
+  }
+  </script>
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0C0C1E 0%, #1A1A3D 100%);
+      color: white;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Top Navigation - SIMPLIFIED */
+    .top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(135deg, #6A1B9A, #B39DDB);
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    .logo { font-size: 24px; font-weight: 700; color: white; }
+    .nav-links { display: flex; gap: 20px; align-items: center; }
+    .nav-link {
+      color: white; text-decoration: none; font-weight: 500;
+      padding: 8px 16px; border-radius: 20px; transition: all 0.3s ease;
+    }
+    .nav-link:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+    .back-btn {
+      background: rgba(255,255,255,0.2); padding: 10px 20px;
+      border-radius: 25px; font-weight: 600;
+    }
+    .progress-info {
+      background: rgba(255,255,255,0.18); padding: 8px 16px;
+      border-radius: 20px; font-size: 14px; font-weight: 500;
+    }
+
+    /* Main Content - FULL WIDTH */
+    .main-content { margin-top: 90px; padding: 20px; max-width: 1200px; margin-left: auto; margin-right: auto; }
+
+    /* Level Map */
+    .level-section { text-align: center; margin-bottom: 40px; }
+    .section-title {
+      font-size: 32px; background: linear-gradient(135deg, #ffd93d, #ff6b6b);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 20px; font-weight: 700;
+    }
+    .map-container { display: flex; justify-content: center; align-items: center; margin: 30px 0; }
+    .map-bg {
+      position: relative; width: 950px; height: 450px; max-width: 95vw;
+      border-radius: 35px; background: linear-gradient(135deg, #79c2ff 0%, #e5ffb8 25%, #ffd93d 50%, #ff9a8b 75%, #ffecd2 100%);
+      box-shadow: 0 15px 40px rgba(121,194,255,0.4), 0 8px 25px rgba(0,0,0,0.3), inset 0 5px 20px rgba(255,255,255,0.2);
+      overflow: hidden;
+    }
+    .map-bg::before {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80px 40px at 12% 18%, #f9f3d0 0%, #f9f3d0 35px, transparent 38px),
+                  radial-gradient(ellipse 80px 40px at 28% 32%, #f9f3d0 0%, #f9f3d0 35px, transparent 38px),
+                  radial-gradient(ellipse 80px 40px at 45% 22%, #f9f3d0 0%, #f9f3d0 35px, transparent 38px),
+                  radial-gradient(ellipse 80px 40px at 62% 38%, #f9f3d0 0%, #f9f3d0 35px, transparent 38px),
+                  radial-gradient(ellipse 80px 40px at 82% 25%, #f9f3d0 0%, #f9f3d0 35px, transparent 38px),
+                  radial-gradient(ellipse 80px 40px at 20% 68%, #f9f3d0 0%, #f9f3d0 35px, transparent 38px),
+                  radial-gradient(ellipse 80px 40px at 38% 78%, #f9f3d0 0%, #f9f3d0 35px, transparent 38px),
+                  radial-gradient(ellipse 80px 40px at 55% 70%, #f9f3d0 0%, #f9f3d0 35px, transparent 38px),
+                  radial-gradient(ellipse 80px 40px at 75% 82%, #f9f3d0 0%, #f9f3d0 35px, transparent 38px);
+      opacity: 0.95;
+    }
+
+    /* Level Buttons */
+    .level-btn {
+      position: absolute; width: 75px; height: 75px; border-radius: 50%;
+      border: 6px solid #ffd93d; background: radial-gradient(circle at 25% 25%, #ffffff 0%, #b0e2ff 40%, #4da8ff 100%);
+      color: #00416b; font-size: 26px; font-weight: 800; cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 3px 8px rgba(255,255,255,0.4);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10; user-select: none;
+    }
+    .level-btn:hover:not(.locked):not(.completed) {
+      transform: translateY(-5px) scale(1.08); box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+      border-color: #ff6b6b;
+    }
+    .level-btn.locked {
+      background: radial-gradient(circle at 25% 25%, #e0e0e0 0%, #b0b0b0 70%, #808080 100%);
+      border-color: #888; color: #555; cursor: not-allowed; opacity: 0.7;
+    }
+    .level-btn.completed {
+      background: radial-gradient(circle at 25% 25%, #fff5c0 0%, #ffe066 45%, #ffb703 100%);
+      border-color: #ff6b6b; color: #5a2700; animation: sparkle 2s infinite;
+    }
+    @keyframes sparkle {
+      0%, 100% { box-shadow: 0 8px 20px rgba(255,183,3,0.6); }
+      50% { box-shadow: 0 12px 30px rgba(255,107,107,0.8); }
+    }
+
+    .level-1 { left: 10%; top: 15%; }
+    .level-2 { left: 27%; top: 28%; }
+    .level-3 { left: 44%; top: 20%; }
+    .level-4 { left: 61%; top: 34%; }
+    .level-5 { left: 80%; top: 22%; }
+    .level-6 { left: 16%; top: 65%; }
+    .level-7 { left: 34%; top: 76%; }
+    .level-8 { left: 52%; top: 67%; }
+    .level-9 { left: 70%; top: 80%; }
+    .level-10 { left: 86%; top: 70%; }
+
+    /* Quiz Styles */
+    .quiz-question {
+      background: rgba(255,255,255,0.05); border-radius: 15px;
+      padding: 20px; margin: 15px 0; border-left: 4px solid #ffd93d;
+    }
+    .question-text { font-size: 18px; margin-bottom: 15px; font-weight: 500; }
+    .quiz-options { display: grid; gap: 10px; }
+    .quiz-option {
+      padding: 12px 16px; background: rgba(255,255,255,0.1);
+      border-radius: 12px; border: 2px solid transparent;
+      cursor: pointer; transition: all 0.2s ease; font-size: 16px;
+    }
+    .quiz-option:hover:not(.selected) { background: rgba(255,217,61,0.2); border-color: #ffd93d; }
+    .quiz-option.selected { background: rgba(59,130,246,0.3); border-color: #3b82f6; }
+    .quiz-option.correct { background: rgba(34,197,94,0.3); border-color: #22c55e; }
+    .quiz-option.incorrect { background: rgba(239,68,68,0.3); border-color: #ef4444; }
+
+    /* Card Modal */
+    .card-modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      display: none; align-items: center; justify-content: center;
+      z-index: 200; backdrop-filter: blur(8px);
+    }
+    .card {
+      width: 95%; max-width: 550px; max-height: 85vh;
+      background: linear-gradient(135deg, #1e3a8a, #3b82f6, #1e40af);
+      border-radius: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+      overflow: hidden; animation: cardSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes cardSlideIn {
+      from { opacity: 0; transform: translateY(50px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .card-header {
+      padding: 20px 25px; background: rgba(0,0,0,0.3);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .card-type { font-size: 20px; font-weight: 600; color: #ffd93d; }
+    .close-card {
+      background: none; border: none; font-size: 28px; color: #fff;
+      cursor: pointer; padding: 5px; border-radius: 50%; transition: all 0.3s ease;
+    }
+    .close-card:hover { background: rgba(255,255,255,0.2); }
+    .card-body {
+      padding: 30px; max-height: 400px; overflow-y: auto; font-size: 18px; line-height: 1.6;
+    }
+    .card-footer {
+      padding: 20px 25px; display: flex; justify-content: space-between;
+      align-items: center; background: rgba(0,0,0,0.25); gap: 15px;
+    }
+    .nav-btn {
+      flex: 1; padding: 12px 20px; border-radius: 25px; border: none;
+      font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+    }
+    .nav-btn.prev { background: rgba(255,255,255,0.2); color: #fff; }
+    .nav-btn.next { background: linear-gradient(45deg, #ffd93d, #ff6b6b); color: #2d1b00; }
+    .nav-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+    .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .stars-display { font-size: 16px; color: #ffe066; font-weight: 600; min-width: 120px; text-align: center; }
+
+    @media (max-width: 768px) {
+      .map-bg { width: 95vw; height: 350px; }
+      .level-btn { width: 60px; height: 60px; font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Nav - NO Side Nav -->
+  <nav class="top-nav">
+    <div class="logo">🚀 LearnSpace</div>
+    <div class="nav-links">
+      <a href="profile.html" class="nav-link">👤 Profile</a>
+      <a href="courses.html" class="nav-link back-btn">← Back to Courses</a>
+      <div class="progress-info">
+        Level <span id="currentLevelInfo">1</span>/10 | ⭐ <span id="scienceStars">0</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <section class="level-section">
+      <h1 class="section-title" id="sectionTitle">🔬 Science Space</h1>
+      <div class="map-container">
+        <div class="map-bg">
+          <button class="level-btn level-1" data-level="1">1</button>
+          <button class="level-btn level-2 locked" data-level="2">2</button>
+          <button class="level-btn level-3 locked" data-level="3">3</button>
+          <button class="level-btn level-4 locked" data-level="4">4</button>
+          <button class="level-btn level-5 locked" data-level="5">5</button>
+          <button class="level-btn level-6 locked" data-level="6">6</button>
+          <button class="level-btn level-7 locked" data-level="7">7</button>
+          <button class="level-btn level-8 locked" data-level="8">8</button>
+          <button class="level-btn level-9 locked" data-level="9">9</button>
+          <button class="level-btn level-10 locked" data-level="10">10</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Card Modal -->
+  <div class="card-modal" id="cardModal">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-type" id="cardType">📚 Preparation</span>
+        <button class="close-card" id="closeBtn">×</button>
+      </div>
+      <div class="card-body" id="cardBody"></div>
+      <div class="card-footer">
+        <button class="nav-btn prev" id="prevBtn">← Previous</button>
+        <div class="stars-display">
+          ⭐ <span id="starsCounter">0</span> / <span id="totalStars">10</span>
+        </div>
+        <button class="nav-btn next" id="nextBtn">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript - FIXED Next Button -->
+  <script type="module">
+  // Firebase Config - REPLACE WITH YOUR ACTUAL CONFIG
+  const firebaseConfig = {
+  apiKey: "AIzaSyA1lno70d82bnOlBeb0ShRS-PW6cE4PAX8",
+  authDomain: "learnapp-683e9.firebaseapp.com",
+  projectId: "learnapp-683e9",
+  storageBucket: "learnapp-683e9.firebasestorage.app",
+  messagingSenderId: "989728103752",
+  appId: "1:989728103752:web:c0a228b0d2ef2e6cf3277d"
+};
+
+
+  import { initializeApp } from 'firebase/app';
+  import { getAuth, onAuthStateChanged } from 'firebase/auth';
+  import { getDatabase, ref, onValue, update, get } from 'firebase/database';
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+
+  // Level 1 Content: 5 Prep + 5 Test
+  const scienceLevel1 = {
+    title: "🌡️ Atoms & Elements",
+    cards: [
+      // 5 PREPARATION (NO STARS FOR THESE)
+      { type: "📚", content: "Atoms are the smallest units of matter that retain the properties of an element.", isQuiz: false },
+      { type: "🔬", content: "Atoms consist of protons (positive), neutrons (neutral), and electrons (negative).", isQuiz: false },
+      { type: "⚡", content: "The number of protons determines the element type (atomic number).", isQuiz: false },
+      { type: "🎯", content: "The Periodic Table arranges elements by increasing atomic number.", isQuiz: false },
+      { type: "📖", content: "Isotopes are atoms of the same element with different numbers of neutrons.", isQuiz: false },
+      
+      // 5 TEST QUESTIONS (STARS ONLY FOR THESE)
+      { 
+        type: "❓", content: {
+          question: "What is the smallest unit of matter?",
+          options: ["Molecule", "Atom", "Cell", "Proton"],
+          correct: 1,
+          explanation: "Atom is the smallest unit of matter that retains the properties of an element."
+        }, 
+        isQuiz: true 
+      },
+      { 
+        type: "❓", content: {
+          question: "Which subatomic particle has no charge?",
+          options: ["Proton", "Electron", "Neutron", "Nucleus"],
+          correct: 2,
+          explanation: "Neutrons are neutral particles found in the nucleus."
+        }, 
+        isQuiz: true 
+      },
+      { 
+        type: "❓", content: {
+          question: "What determines an element's identity?",
+          options: ["Neutrons", "Electrons", "Protons", "Mass"],
+          correct: 2,
+          explanation: "The number of protons (atomic number) defines the element."
+        }, 
+        isQuiz: true 
+      },
+      { 
+        type: "❓", content: {
+          question: "Where are electrons located?",
+          options: ["Nucleus", "Orbitals", "Proton cloud", "Neutron shell"],
+          correct: 1,
+          explanation: "Electrons move around the nucleus in orbitals or shells."
+        }, 
+        isQuiz: true 
+      },
+      { 
+        type: "❓", content: {
+          question: "What are isotopes?",
+          options: [
+            "Atoms with different numbers of protons",
+            "Atoms with different numbers of electrons", 
+            "Atoms with different numbers of neutrons",
+            "Different elements altogether"
+          ],
+          correct: 2,
+          explanation: "Isotopes are atoms of the same element with different neutron counts."
+        }, 
+        isQuiz: true 
+      }
+    ]
+  };
+// Level 2 Content: Solar System
+const scienceLevel2 = {
+  title: "🪐 Our Solar System",
+  cards: [
+    // 5 LEARNING CARDS
+    { type: "🌌", content: "Our Solar System has 8 planets orbiting the Sun.", isQuiz: false },
+    { type: "☀️", content: "The Sun is a star at the center of our Solar System.", isQuiz: false },
+    { type: "🪐", content: "The four inner planets are Mercury, Venus, Earth, and Mars.", isQuiz: false },
+    { type: "🪐", content: "The four outer planets are Jupiter, Saturn, Uranus, and Neptune.", isQuiz: false },
+    { type: "🌍", content: "Earth is the only planet known to support life.", isQuiz: false },
+    
+    // 5 TEST QUESTIONS
+    { 
+      type: "❓", content: {
+        question: "How many planets are in our Solar System?",
+        options: ["7", "8", "9", "10"],
+        correct: 1,
+        explanation: "There are 8 planets: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune."
+      }, 
+      isQuiz: true 
+    },
+    { 
+      type: "❓", content: {
+        question: "Which planet is closest to the Sun?",
+        options: ["Venus", "Earth", "Mercury", "Mars"],
+        correct: 2,
+        explanation: "Mercury is the closest planet to the Sun."
+      }, 
+      isQuiz: true 
+    },
+    { 
+      type: "❓", content: {
+        question: "Which planet is known for its beautiful rings?",
+        options: ["Jupiter", "Saturn", "Uranus", "Neptune"],
+        correct: 1,
+        explanation: "Saturn has the most prominent and beautiful ring system."
+      }, 
+      isQuiz: true 
+    },
+    { 
+      type: "❓", content: {
+        question: "Which is the largest planet in our Solar System?",
+        options: ["Saturn", "Jupiter", "Earth", "Uranus"],
+        correct: 1,
+        explanation: "Jupiter is the largest planet in our Solar System."
+      }, 
+      isQuiz: true 
+    },
+    { 
+      type: "❓", content: {
+        question: "Which planet is called the 'Red Planet'?",
+        options: ["Venus", "Mars", "Jupiter", "Saturn"],
+        correct: 1,
+        explanation: "Mars is called the Red Planet because of its reddish appearance."
+      }, 
+      isQuiz: true 
+    }
+  ]
+};
+
+// Level 3 Content: States of Matter
+const scienceLevel3 = {
+  title: "💧 States of Matter",
+  cards: [
+    // 5 LEARNING CARDS
+    { type: "🔬", content: "Matter exists in three main states: solid, liquid, and gas.", isQuiz: false },
+    { type: "🧊", content: "Solids have fixed shape and volume. Example: Ice, Rock.", isQuiz: false },
+    { type: "💧", content: "Liquids have fixed volume but take the shape of their container. Example: Water, Juice.", isQuiz: false },
+    { type: "💨", content: "Gases have no fixed shape or volume. Example: Air, Steam.", isQuiz: false },
+    { type: "🔥", content: "Matter can change states through heating or cooling.", isQuiz: false },
+    
+    // 5 TEST QUESTIONS
+    { 
+      type: "❓", content: {
+        question: "Which state of matter has a fixed shape?",
+        options: ["Solid", "Liquid", "Gas", "Plasma"],
+        correct: 0,
+        explanation: "Solids have a fixed shape and volume."
+      }, 
+      isQuiz: true 
+    },
+    { 
+      type: "❓", content: {
+        question: "Water turning to ice is called?",
+        options: ["Melting", "Freezing", "Evaporation", "Condensation"],
+        correct: 1,
+        explanation: "Freezing is when liquid turns to solid (water → ice)."
+      }, 
+      isQuiz: true 
+    },
+    { 
+      type: "❓", content: {
+        question: "Which state of matter fills its container completely?",
+        options: ["Solid", "Liquid", "Gas", "All of them"],
+        correct: 2,
+        explanation: "Gases expand to fill their container completely."
+      }, 
+      isQuiz: true 
+    },
+    { 
+      type: "❓", content: {
+        question: "What happens when you heat a solid?",
+        options: ["It melts", "It freezes", "It condenses", "It evaporates"],
+        correct: 0,
+        explanation: "Heating a solid causes it to melt into a liquid."
+      }, 
+      isQuiz: true 
+    },
+    { 
+      type: "❓", content: {
+        question: "Which is NOT a state of matter?",
+        options: ["Solid", "Liquid", "Gas", "Light"],
+        correct: 3,
+        explanation: "Light is not a state of matter. The main states are solid, liquid, and gas."
+      }, 
+      isQuiz: true 
+    }
+  ]
+};
+
+// Level 4 Content: Animal Classification
+const scienceLevel4 = {
+  title: "🐾 Animal Kingdom",
+  cards: [
+    // 5 LEARNING CARDS
+    { type: "🦁", content: "Animals are classified into different groups based on their characteristics.", isQuiz: false },
+    { type: "🐠", content: "Fish live in water, have gills to breathe, and fins to swim.", isQuiz: false },
+    { type: "🐸", content: "Amphibians can live both in water and on land. Example: Frogs.", isQuiz: false },
+    { type: "🐍", content: "Reptiles have scales and lay eggs on land. Example: Snakes, Lizards.", isQuiz: false },
+    { type: "🐦", content: "Birds have feathers, wings, and lay eggs. Most can fly.", isQuiz: false },
+    
+    // 5 TEST QUESTIONS
+    { 
+      type: "❓", content: {
+        question: "Which animal breathes using gills?",
+        options: ["Frog", "Fish", "Lizard", "Bird"],
+        correct: 1,
+        explanation: "Fish breathe using gills to extract oxygen from water."
+      }, 
+      isQuiz: true 
+    },
+    { 
+      type: "❓", content: {
+        question: "What covers a bird's body?",
+        options: ["Scales", "Fur", "Feathers", "Shell"],
+        correct: 2,
+        explanation: "Birds are covered with feathers which help them fly."
+      }, 
+      isQuiz: true 
+    },
+    { 
+      type: "❓", content: {
+        question: "Which animal is an amphibian?",
+        options: ["Fish", "Frog", "Snake", "Bird"],
+        correct: 1,
+        explanation: "Frogs are amphibians - they can live both in water and on land."
+      }, 
+      isQuiz: true 
+    },
+    { 
+      type: "❓", content: {
+        question: "What do reptiles have on their skin?",
+        options: ["Feathers", "Scales", "Fur", "Hair"],
+        correct: 1,
+        explanation: "Reptiles have scales that protect their bodies."
+      }, 
+      isQuiz: true 
+    },
+    { 
+      type: "❓", content: {
+        question: "Which animal lays eggs in water?",
+        options: ["Bird", "Fish", "Cat", "Dog"],
+        correct: 1,
+        explanation: "Fish lay their eggs in water."
+      }, 
+      isQuiz: true 
+    }
+  ]
+};
+
+// Level 5 Content: Plant Life
+const scienceLevel5 = {
+  title: "🌱 Plant Life Cycle",
+  cards: [
+    // 5 LEARNING CARDS
+    { type: "🌱", content: "Plants are living things that make their own food through photosynthesis.", isQuiz: false },
+    { type: "🍃", content: "Leaves are the food factories of plants where photosynthesis happens.", isQuiz: false },
+    { type: "🌿", content: "Roots anchor the plant and absorb water and nutrients from soil.", isQuiz: false },
+    { type: "🌼", content: "Flowers help plants reproduce by making seeds.", isQuiz: false },
+    { type: "🌻", content: "Plants need sunlight, water, and air to grow.", isQuiz: false },
+    
+    // 5 TEST QUESTIONS
+    { 
+      type: "❓", content: {
+        question: "What do plants make their food from?",
+        options: ["Soil", "Water", "Sunlight", "All of these"],
+        correct: 3,
+        explanation: "Plants use sunlight, water, and air to make food through photosynthesis."
+      }, 
+      isQuiz: true 
+    },
+    { 
+      type: "❓", content: {
+        question: "Which part of the plant makes food?",
+        options: ["Roots", "Leaves", "Stem", "Flowers"],
+        correct: 1,
+        explanation: "Leaves make food through photosynthesis using sunlight."
+      }, 
+      isQuiz: true 
+    },
+    { 
+      type: "❓", content: {
+        question: "What do roots do for the plant?",
+        options: ["Make food", "Absorb water", "Attract insects", "Make seeds"],
+        correct: 1,
+        explanation: "Roots absorb water and nutrients from the soil."
+      }, 
+      isQuiz: true 
+    },
+    { 
+      type: "❓", content: {
+        question: "What do flowers help plants do?",
+        options: ["Make food", "Reproduce", "Absorb water", "Stand straight"],
+        correct: 1,
+        explanation: "Flowers help plants reproduce by making seeds."
+      }, 
+      isQuiz: true 
+    },
+    { 
+      type: "❓", content: {
+        question: "What process do plants use to make food?",
+        options: ["Respiration", "Photosynthesis", "Digestion", "Evaporation"],
+        correct: 1,
+        explanation: "Photosynthesis is the process plants use to make food from sunlight."
+      }, 
+      isQuiz: true 
+    }
+  ]
+};
+  // Global State
+  let currentUser = null;
+  let userData = null;
+  let scienceProgress = { currentLevel: 1, stars: 0, totalStars: 0, completed: [] };
+  let currentLevelCards = [];
+  let currentCardIndex = 0;
+  let quizAnswers = {};
+  let quizSubmitted = false; // Track if quiz has been submitted
+  let levelStarsEarned = 0; // Stars earned in current level
+  let currentLevelNumber = 1;
+
+  // DOM Elements
+  const elements = {
+    levelBtns: document.querySelectorAll('.level-btn'),
+    cardModal: document.getElementById('cardModal'),
+    cardType: document.getElementById('cardType'),
+    cardBody: document.getElementById('cardBody'),
+    prevBtn: document.getElementById('prevBtn'),
+    nextBtn: document.getElementById('nextBtn'),
+    closeBtn: document.getElementById('closeBtn'),
+    starsCounter: document.getElementById('starsCounter'),
+    totalStars: document.getElementById('totalStars'),
+    currentLevelInfo: document.getElementById('currentLevelInfo'),
+    scienceStars: document.getElementById('scienceStars'),
+    sectionTitle: document.getElementById('sectionTitle')
+  };
+
+  // Initialize
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    if (user) {
+      await loadUserProgress();
+    } else {
+      // Redirect to login if not authenticated
+      window.location.href = 'login.html';
+      return;
+    }
+    setupEventListeners();
+  });
+
+  function setupEventListeners() {
+    elements.levelBtns.forEach(btn => {
+      btn.addEventListener('click', handleLevelClick);
+    });
+    
+    elements.prevBtn.addEventListener('click', prevCard);
+    elements.nextBtn.addEventListener('click', nextCard);
+    elements.closeBtn.addEventListener('click', closeCard);
+    
+    elements.prevBtn.disabled = true;
+  }
+
+  async function loadUserProgress() {
+    const userRef = ref(db, `users/${currentUser.uid}`);
+    onValue(userRef, (snapshot) => {
+      userData = snapshot.val();
+      if (userData) {
+        // Load science progress or initialize if doesn't exist
+        if (userData.science) {
+          scienceProgress = userData.science;
+        } else {
+          scienceProgress = { 
+            currentLevel: 1, 
+            stars: 0, 
+            totalStars: 0, 
+            completed: [],
+            levelDetails: {} // Store detailed level progress
+          };
+        }
+        
+        // Also check for progress in the old format (userData.progress?.science)
+        if (userData.progress?.science && typeof userData.progress.science === 'number') {
+          scienceProgress.currentLevel = Math.max(scienceProgress.currentLevel, userData.progress.science + 1);
+          scienceProgress.stars = (userData.progress.science || 0) * 10;
+          scienceProgress.totalStars = (userData.progress.science || 0) * 10;
+        }
+        
+        updateUI();
+      }
+    });
+  }
+
+  function updateUI() {
+    elements.levelBtns.forEach(btn => {
+      const levelNum = parseInt(btn.dataset.level);
+      btn.classList.remove('completed', 'locked');
+      
+      if (scienceProgress.completed.includes(levelNum)) {
+        btn.classList.add('completed');
+      } else if (levelNum > scienceProgress.currentLevel) {
+        btn.classList.add('locked');
+      }
+    });
+    
+    elements.currentLevelInfo.textContent = scienceProgress.currentLevel;
+    elements.scienceStars.textContent = scienceProgress.stars || 0;
+  }
+
+  function handleLevelClick() {
+    const levelNum = parseInt(this.dataset.level);
+    
+    if (this.classList.contains('locked')) {
+      alert('🔒 Complete previous levels first!');
+      return;
+    }
+    
+    // Check if level is already completed
+    const isLevelCompleted = scienceProgress.completed.includes(levelNum);
+    
+    currentLevelNumber = levelNum;
+    loadLevelContent(levelNum, isLevelCompleted);
+    showCardModal();
+  }
+
+  function loadLevelContent(levelNum, isLevelCompleted = false) {
+  // Load content for each level
+  switch(levelNum) {
+    case 1:
+      currentLevelCards = scienceLevel1.cards;
+      elements.sectionTitle.textContent = scienceLevel1.title;
+      break;
+    case 2:
+      currentLevelCards = scienceLevel2.cards;
+      elements.sectionTitle.textContent = scienceLevel2.title;
+      break;
+    case 3:
+      currentLevelCards = scienceLevel3.cards;
+      elements.sectionTitle.textContent = scienceLevel3.title;
+      break;
+    case 4:
+      currentLevelCards = scienceLevel4.cards;
+      elements.sectionTitle.textContent = scienceLevel4.title;
+      break;
+    case 5:
+      currentLevelCards = scienceLevel5.cards;
+      elements.sectionTitle.textContent = scienceLevel5.title;
+      break;
+    default:
+      // Placeholder for levels 6-10
+      currentLevelCards = [
+        { type: "📚", content: `Level ${levelNum} - More science adventures coming soon!`, isQuiz: false },
+        { type: "⭐", content: `🎉 Level ${levelNum} will be available soon! Keep exploring!`, isQuiz: false }
+      ];
+      elements.sectionTitle.textContent = `🔬 Science Space - Level ${levelNum}`;
+  }
+  
+  currentCardIndex = 0;
+  quizAnswers = {};
+  quizSubmitted = false;
+  levelStarsEarned = 0;
+  
+  // If level is already completed, load previous answers
+  if (isLevelCompleted && scienceProgress.levelDetails && scienceProgress.levelDetails[levelNum]) {
+    quizAnswers = scienceProgress.levelDetails[levelNum].answers || {};
+    levelStarsEarned = scienceProgress.levelDetails[levelNum].stars || 0;
+  }
+  
+  showCurrentCard();
+}
+
+  function showCardModal() {
+    elements.cardModal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCard() {
+    elements.cardModal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    
+    // Reset quiz state when closing
+    if (!quizSubmitted) {
+      quizAnswers = {};
+      levelStarsEarned = 0;
+    }
+  }
+
+  function showCurrentCard() {
+    const card = currentLevelCards[currentCardIndex];
+    
+    if (card.isQuiz) {
+      renderQuiz(card);
+    } else {
+      elements.cardType.textContent = card.type;
+      elements.cardBody.innerHTML = `<p style="margin: 0;">${card.content}</p>`;
+    }
+
+    // Update navigation buttons
+    elements.prevBtn.disabled = currentCardIndex === 0;
+    const isLastCard = currentCardIndex === currentLevelCards.length - 1;
+    
+    // Calculate current stars (only count quiz cards that have been answered)
+    let earnedStars = 0;
+    if (quizSubmitted) {
+      earnedStars = levelStarsEarned;
+    } else {
+      // Count only correctly answered quiz cards
+      Object.keys(quizAnswers).forEach(cardIdx => {
+        const cardIndex = parseInt(cardIdx);
+        if (currentLevelCards[cardIndex]?.isQuiz) {
+          const cardData = currentLevelCards[cardIndex].content;
+          if (quizAnswers[cardIndex] === cardData.correct) {
+            earnedStars += 1;
+          }
+        }
+      });
+    }
+    
+    elements.starsCounter.textContent = earnedStars;
+    elements.totalStars.textContent = '5'; // Only 5 test cards give stars
+    
+    // Update next button text
+    if (isLastCard) {
+      if (quizSubmitted) {
+        elements.nextBtn.textContent = '🎉 Finish Level!';
+      } else {
+        elements.nextBtn.textContent = '📊 Check Results';
+      }
+    } else {
+      elements.nextBtn.textContent = 'Next →';
+    }
+  }
+
+  function renderQuiz(card) {
+    const q = card.content;
+    elements.cardType.textContent = card.type;
+    
+    let html = `
+      <div class="quiz-question">
+        <div class="question-text">${q.question}</div>
+        <div class="quiz-options">`;
+    
+    q.options.forEach((option, index) => {
+      const selected = quizAnswers[currentCardIndex] === index;
+      const isCorrectAnswer = index === q.correct;
+      let classes = 'quiz-option';
+      
+      if (selected) {
+        classes += ' selected';
+        if (quizSubmitted) {
+          classes += isCorrectAnswer ? ' correct' : ' incorrect';
+        }
+      }
+      
+      // If quiz is submitted, show correct answer
+      if (quizSubmitted && isCorrectAnswer && !selected) {
+        classes += ' correct';
+      }
+      
+      // Disable clicking after submission
+      const onClick = quizSubmitted ? '' : `onclick="selectAnswer(${currentCardIndex}, ${index})"`;
+      const style = quizSubmitted ? 'cursor: default;' : '';
+      
+      html += `<div class="${classes}" ${onClick} style="${style}">${option}</div>`;
+    });
+    
+    // Show explanation if quiz is submitted
+    if (quizSubmitted && q.explanation) {
+      html += `<div style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; font-size: 14px;">
+                <strong>💡 Explanation:</strong> ${q.explanation}
+              </div>`;
+    }
+    
+    html += `</div></div>`;
+    elements.cardBody.innerHTML = html;
+  }
+
+  // Global function for quiz selection
+  window.selectAnswer = function(cardIndex, optionIndex) {
+    if (quizSubmitted) return; // Don't allow changes after submission
+    
+    quizAnswers[cardIndex] = optionIndex;
+    showCurrentCard(); // Refresh to show selection
+  };
+
+  function prevCard() {
+    if (currentCardIndex > 0) {
+      currentCardIndex--;
+      showCurrentCard();
+    }
+  }
+
+  function nextCard() {
+    const currentCard = currentLevelCards[currentCardIndex];
+    
+    // If it's a quiz card and not submitted yet, require an answer
+    if (currentCard?.isQuiz && !quizSubmitted && quizAnswers[currentCardIndex] === undefined) {
+      alert('⚠️ Please select an answer before proceeding!');
+      return;
+    }
+    
+    // If it's the last card and not submitted yet
+    if (currentCardIndex === currentLevelCards.length - 1 && !quizSubmitted) {
+      submitQuiz();
+      return;
+    }
+    
+    // If it's the last card and already submitted, complete the level
+    if (currentCardIndex === currentLevelCards.length - 1 && quizSubmitted) {
+      completeLevel();
+      return;
+    }
+    
+    // Otherwise, go to next card
+    if (currentCardIndex < currentLevelCards.length - 1) {
+      currentCardIndex++;
+      showCurrentCard();
+    }
+  }
+
+  function submitQuiz() {
+    // Calculate stars earned
+    let stars = 0;
+    Object.keys(quizAnswers).forEach(cardIdx => {
+      const idx = parseInt(cardIdx);
+      if (currentLevelCards[idx]?.isQuiz) {
+        const cardData = currentLevelCards[idx].content;
+        if (quizAnswers[idx] === cardData.correct) {
+          stars += 1;
+        }
+      }
+    });
+    
+    levelStarsEarned = stars;
+    quizSubmitted = true;
+    
+    // Show results
+    alert(`📊 Quiz Results!\n\n✅ You got ${stars} out of 5 questions correct!\n⭐ You earned ${stars} stars!`);
+    
+    // Update the current card to show results
+    showCurrentCard();
+  }
+
+  async function completeLevel() {
+    // Calculate total stars for this level
+    const starsEarned = levelStarsEarned;
+    
+    // Update local progress
+    if (!scienceProgress.completed.includes(currentLevelNumber)) {
+      scienceProgress.completed.push(currentLevelNumber);
+      scienceProgress.stars = (scienceProgress.stars || 0) + starsEarned;
+      scienceProgress.totalStars = (scienceProgress.totalStars || 0) + 5; // 5 possible stars per level
+      
+      // Store detailed level progress
+      if (!scienceProgress.levelDetails) {
+        scienceProgress.levelDetails = {};
+      }
+      scienceProgress.levelDetails[currentLevelNumber] = {
+        stars: starsEarned,
+        answers: { ...quizAnswers },
+        completedDate: new Date().toISOString()
+      };
+      
+      // Unlock next level if not already unlocked
+      if (currentLevelNumber === scienceProgress.currentLevel) {
+        scienceProgress.currentLevel = Math.min(10, currentLevelNumber + 1);
+      }
+    }
+    
+    // Update Firebase
+    if (currentUser) {
+      try {
+        const updates = {};
+        const userRef = ref(db, `users/${currentUser.uid}`);
+        
+        // Update science progress
+        updates[`science`] = scienceProgress;
+        
+        // Also update the old progress format for compatibility with other pages
+        const completedLevels = scienceProgress.completed.length;
+        updates[`progress/science`] = completedLevels;
+        
+        // Update total stars in profile
+        const currentTotalStars = userData?.score || 0;
+        updates[`score`] = currentTotalStars + starsEarned;
+        
+        // Update streak
+        await updateStreak();
+        
+        // Apply all updates
+        await update(userRef, updates);
+        
+        console.log('Progress saved to Firebase:', updates);
+        
+        // Show completion message
+        let badgeMessage = '';
+        if (currentLevelNumber % 3 === 0) {
+          badgeMessage = `\n🎖️ You earned a badge for completing 3 levels!`;
+        }
+        
+        alert(`🎉 Level ${currentLevelNumber} COMPLETED!\n\n⭐ Stars Earned: ${starsEarned}/5${badgeMessage}\n\n✅ Level ${scienceProgress.currentLevel} is now unlocked!`);
+        
+      } catch (error) {
+        console.error('Error saving progress:', error);
+        alert('⚠️ Error saving progress. Please check your connection.');
+      }
+    }
+    
+    updateUI();
+    closeCard();
+  }
+
+  async function updateStreak() {
+    try {
+      const today = new Date().toDateString();
+      const lastLogin = userData?.lastLogin ? new Date(userData.lastLogin).toDateString() : null;
+      
+      let currentStreak = userData?.streak || 0;
+      
+      if (lastLogin === today) {
+        // Already logged in today
+        return currentStreak;
+      } else if (lastLogin && isYesterday(new Date(lastLogin))) {
+        // Consecutive day
+        currentStreak += 1;
+      } else {
+        // New streak or broken streak
+        currentStreak = 1;
+      }
+      
+      // Update in database
+      const userRef = ref(db, `users/${currentUser.uid}`);
+      await update(userRef, {
+        streak: currentStreak,
+        lastLogin: new Date().toISOString()
+      });
+      
+      return currentStreak;
+    } catch (error) {
+      console.error('Error updating streak:', error);
+      return 0;
+    }
+  }
+
+  function isYesterday(date) {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    return date.toDateString() === yesterday.toDateString();
+  }
+
+  // Modal backdrop click
+  elements.cardModal.addEventListener('click', (e) => {
+    if (e.target === elements.cardModal) closeCard();
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (elements.cardModal.style.display === 'flex') {
+      if (e.key === 'ArrowLeft') prevCard();
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault(); // Prevent space from scrolling
+        nextCard();
+      }
+      if (e.key === 'Escape') closeCard();
+    }
+  });
+</script>
+</body>
+</html>

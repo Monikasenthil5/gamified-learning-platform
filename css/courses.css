@@ -1,0 +1,141 @@
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: #F4FBFF;
+}
+
+/* Top Navigation */
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #4DA8FF;
+  padding: 10px 20px;
+  color: white;
+}
+
+.left-nav {
+  display: flex;
+  align-items: center;
+}
+
+.menu-btn {
+  font-size: 22px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  margin-right: 12px;
+}
+
+.top-links a {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.top-links .active {
+  text-decoration: underline;
+}
+
+/* Side Navigation */
+.side-nav {
+  height: 100%;
+  width: 240px;
+  position: fixed;
+  top: 0;
+  left: -240px;
+  background: #2F80ED;
+  padding-top: 60px;
+  transition: 0.3s;
+}
+
+.side-nav a {
+  padding: 12px 20px;
+  display: block;
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.side-nav a:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 28px;
+}
+
+/* Page Title */
+.page-title {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.page-title h1 {
+  color: #333;
+}
+
+.page-title p {
+  color: #555;
+}
+
+/* Courses Grid */
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px;
+  padding: 30px;
+}
+
+/* Course Card */
+.course-card {
+  background: white;
+  border-radius: 18px;
+  text-align: center;
+  padding: 20px;
+  box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.course-card img {
+  width: 100%;
+  height: 140px;
+  object-fit: contain;
+}
+
+.course-card h3 {
+  margin: 10px 0;
+}
+
+.course-card p {
+  font-size: 14px;
+  color: #555;
+}
+
+.course-card button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  background: #4DA8FF;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+/* Add this to your existing courses.css */
+.progress-badge {
+  display: none; /* Completely hides them */
+  visibility: hidden; /* Alternative */
+  opacity: 0; /* Makes them transparent */
+  pointer-events: none; /* Prevents interaction */
+}
+
+/* Course Colors */
+.math { border-top: 6px solid #6BCF9D; }
+.word { border-top: 6px solid #FF9F43; }
+.science { border-top: 6px solid #B39DDB; }
+.logic { border-top: 6px solid #FFD93D; }

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>LearnFun | Progress</title>
+  <link rel="stylesheet" href="css/progress.css">
+  
+  <!-- Firebase CDN -->
+  <script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js",
+      "firebase/database": "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js"
+    }
+  }
+  </script>
+</head>
+<body>
+
+<!-- Side Navigation -->
+<div id="sideNav" class="side-nav">
+  <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">×</a>
+  <a href="home.html">🏠 Home</a>
+  <a href="courses.html">📘 Courses</a>
+  <a href="progress.html">📊 Progress</a>
+  <a href="profile.html">👤 Profile</a>
+  <a href="about.html">ℹ️ About Us</a>
+</div>
+
+<!-- Top Navigation -->
+<header class="top-nav">
+  <div class="left-nav">
+    <button class="menu-btn" onclick="toggleSideNav()">☰</button>
+    <h2>🎮 LearnFun</h2>
+  </div>
+
+  <nav class="top-links">
+    <a href="home.html">Home</a>
+    <a href="courses.html">Courses</a>
+    <a href="progress.html">Progress</a>
+    <a href="about.html">About</a>
+    <a href="profile.html" class="profile-icon">👤</a>
+  </nav>
+</header>
+
+<!-- Progress Section -->
+<section class="progress-container">
+  <h1>📈 Student Progress</h1>
+  <p class="subtitle" id="subtitleMsg">Loading your progress...</p>
+
+  <!-- Overall Progress -->
+  <div class="card overall">
+    <h2>🌟 Overall Performance</h2>
+    <div class="circle">
+      <span id="overallPercent">0%</span>
+    </div>
+    <p id="overallMsg">Welcome! Start your learning journey!</p>
+  </div>
+
+  <!-- Subject Progress -->
+  <div class="card">
+    <h2>📚 Subject-wise Progress</h2>
+
+    <div class="progress-item">
+      <label>🔢 Math Land</label>
+      <div class="bar">
+        <div id="mathBar" class="fill math" style="width: 0%"></div>
+      </div>
+      <span id="mathPercent">0%</span>
+    </div>
+
+    <div class="progress-item">
+      <label>📖 Word Jungle</label>
+      <div class="bar">
+        <div id="wordBar" class="fill word" style="width: 0%"></div>
+      </div>
+      <span id="wordPercent">0%</span>
+    </div>
+
+    <div class="progress-item">
+      <label>🔬 Science Space</label>
+      <div class="bar">
+        <div id="scienceBar" class="fill science" style="width: 0%"></div>
+      </div>
+      <span id="sciencePercent">0%</span>
+    </div>
+
+    <div class="progress-item">
+      <label>🧩 Logic Cave</label>
+      <div class="bar">
+        <div id="logicBar" class="fill logic" style="width: 0%"></div>
+      </div>
+      <span id="logicPercent">0%</span>
+    </div>
+  </div>
+
+  <!-- Parent View -->
+  <div class="card parent">
+    <h2>👨‍👩‍👧 Parent Summary</h2>
+    <ul>
+      <li>✅ Attendance: <strong id="attendance">0%</strong></li>
+      <li>🏆 Levels Completed: <strong id="levelsCompleted">0</strong></li>
+      <li>⭐ Average Score: <strong id="avgScore">Nil</strong></li>
+      <li>😊 Learning Behavior: <strong id="behavior">New User</strong></li>
+    </ul>
+  </div>
+</section>
+
+<script type="module">
+  // Firebase CDN Setup
+  import { initializeApp } from 'firebase/app';
+  import { getAuth, onAuthStateChanged } from 'firebase/auth';
+  import { getDatabase, ref, onValue } from 'firebase/database';
+
+  // Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyA1lno70d82bnOlBeb0ShRS-PW6cE4PAX8",
+    authDomain: "learnapp-683e9.firebaseapp.com",
+    projectId: "learnapp-683e9",
+    storageBucket: "learnapp-683e9.firebasestorage.app",
+    messagingSenderId: "989728103752",
+    appId: "1:989728103752:web:c0a228b0d2ef2e6cf3277d"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+
+  // Protect page - redirect if not logged in
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    // Load user progress data
+    loadProgressData(user.uid);
+  });
+
+  function loadProgressData(uid) {
+    const userRef = ref(db, `users/${uid}`);
+    
+    onValue(userRef, (snapshot) => {
+      const userData = snapshot.val();
+      if (userData) {
+        updateProgressUI(userData);
+      }
+    }, (error) => {
+      console.error('Error loading progress:', error);
+      document.getElementById('subtitleMsg').textContent = 'Error loading progress';
+    });
+  }
+
+  function updateProgressUI(userData) {
+    // Get progress for each course
+    const mathProgress = getCourseProgress(userData, 'math');
+    const wordProgress = getCourseProgress(userData, 'word');
+    const scienceProgress = getCourseProgress(userData, 'science');
+    const logicProgress = getCourseProgress(userData, 'logic');
+    
+    // Calculate total levels completed
+    const totalLevels = mathProgress + wordProgress + scienceProgress + logicProgress;
+    
+    // Calculate overall percentage (40 possible levels = 100%)
+    const overallPercent = Math.round((totalLevels / 40) * 100);
+    
+    // Update overall progress
+    document.getElementById('overallPercent').textContent = `${overallPercent}%`;
+    document.getElementById('overallMsg').textContent = 
+      totalLevels === 0 ? "Welcome! Start your learning journey!" :
+      overallPercent < 30 ? "Keep practicing daily!" :
+      overallPercent < 70 ? "Great improvement this month!" : "Outstanding performance! 🎉";
+    
+    // Update subject progress
+    updateProgressBar('math', mathProgress);
+    updateProgressBar('word', wordProgress);
+    updateProgressBar('science', scienceProgress);
+    updateProgressBar('logic', logicProgress);
+    
+    // Update parent summary
+    document.getElementById('attendance').textContent = `${Math.min(100, Math.round(totalLevels * 3))}%`;
+    document.getElementById('levelsCompleted').textContent = totalLevels;
+    
+    // Calculate average score
+    const avgScore = getAverageScore(userData);
+    document.getElementById('avgScore').textContent = avgScore;
+    
+    document.getElementById('behavior').textContent = getBehavior(totalLevels);
+    
+    document.getElementById('subtitleMsg').textContent = 
+      `Great job ${userData.username || 'Student'}! Keep learning! 🌟`;
+    
+    console.log('Progress loaded:', totalLevels, 'levels completed');
+  }
+
+  function getCourseProgress(userData, courseId) {
+    // For science, check the new detailed format
+    if (courseId === 'science' && userData.science?.completed) {
+      return userData.science.completed.length || 0;
+    }
+    
+    // For all courses, check the old progress format
+    if (userData.progress?.[courseId]) {
+      return userData.progress[courseId] || 0;
+    }
+    
+    return 0;
+  }
+
+  function updateProgressBar(subject, levels) {
+    const percent = Math.min(100, Math.round((levels / 10) * 100));
+    document.getElementById(`${subject}Bar`).style.width = `${percent}%`;
+    document.getElementById(`${subject}Percent`).textContent = `${percent}%`;
+  }
+
+  function getAverageScore(userData) {
+    const totalLevels = getCourseProgress(userData, 'math') + 
+                       getCourseProgress(userData, 'word') + 
+                       getCourseProgress(userData, 'science') + 
+                       getCourseProgress(userData, 'logic');
+    
+    // If no levels completed, show "Nil"
+    if (totalLevels === 0) {
+      return "Nil";
+    }
+    
+    // Calculate average stars per completed level (assuming 5 stars max per level)
+    const totalPossibleStars = totalLevels * 5;
+    const earnedStars = userData.score || 0;
+    
+    // Calculate percentage
+    const percentage = (earnedStars / totalPossibleStars) * 100;
+    
+    // Return grade based on percentage
+    if (percentage >= 80) return 'A';
+    if (percentage >= 60) return 'B';
+    if (percentage >= 40) return 'C';
+    if (percentage >= 20) return 'D';
+    return 'P'; // Pass
+  }
+
+  function getBehavior(totalLevels) {
+    if (totalLevels === 0) return 'New User';
+    if (totalLevels < 5) return 'Getting Started';
+    if (totalLevels < 15) return 'Good Progress';
+    if (totalLevels < 30) return 'Excellent';
+    return 'Master Learner';
+  }
+
+  // Navigation functions
+  window.toggleSideNav = function() {
+    document.getElementById("sideNav").style.width = "250px";
+  };
+  
+  window.closeNav = function() {
+    document.getElementById("sideNav").style.width = "0";
+  };
+</script>
+</body>
+</html>

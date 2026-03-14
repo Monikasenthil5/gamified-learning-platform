@@ -1,0 +1,98 @@
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(#6BCF9D, #4DA8FF);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-container {
+  background: white;
+  width: 360px;
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+.auth-container h2 {
+  margin-bottom: 10px;
+}
+
+.auth-container p {
+  color: #555;
+  font-size: 14px;
+}
+
+form {
+  margin-top: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.label {
+  display: block;
+  text-align: left;
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 12px;
+  background: #FFD93D;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #FFC107;
+}
+
+.switch {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.switch a {
+  color: #4DA8FF;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* Avatar Selection */
+.avatar-group {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+
+.avatar-group img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+}
+
+.avatar-group input {
+  display: none;
+}
+
+.avatar-group input:checked + img {
+  border-color: #4DA8FF;
+}

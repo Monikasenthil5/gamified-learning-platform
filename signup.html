@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Sign Up | LearnFun</title>
+  <link rel="stylesheet" href="css/auth.css">
+  
+  <!-- Firebase CDN - COMPLETE SETUP -->
+  <script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js",
+      "firebase/database": "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js"
+    }
+  }
+  </script>
+</head>
+<body>
+<div class="auth-container">
+  <h2>🌈 Join LearnFun!</h2>
+  <p>Create your learning account</p>
+
+  <form id="signupForm">
+    <input type="text" id="signupName" placeholder="Full Name" required>
+    <input type="email" id="signupEmail" placeholder="Email" required>
+    <input type="password" id="signupPassword" placeholder="Password" required>
+    <input type="password" id="signupConfirmPassword" placeholder="Confirm Password" required>
+
+    <label class="label">Date of Birth</label>
+    <input type="date" id="signupDob" required>
+
+    <label class="label">Choose Your Avatar</label>
+    <div class="avatar-group">
+      <label><input type="radio" name="avatar" value="assets/images/avatar1.avif" required><img src="assets/images/avatar1.avif" alt="Avatar 1"></label>
+      <label><input type="radio" name="avatar" value="assets/images/avatar2.avif"><img src="assets/images/avatar2.avif" alt="Avatar 2"></label>
+      <label><input type="radio" name="avatar" value="assets/images/avatar3.avif"><img src="assets/images/avatar3.avif" alt="Avatar 3"></label>
+      <label><input type="radio" name="avatar" value="assets/images/avatar4.avif"><img src="assets/images/avatar4.avif" alt="Avatar 4"></label>
+    </div>
+
+    <button type="submit">Create Account</button>
+  </form>
+
+  <p class="switch">
+    Already have an account? <a href="login.html">Login</a>
+  </p>
+</div>
+
+<script type="module">
+  // Firebase CDN Setup
+  import { initializeApp } from 'firebase/app';
+  import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+  import { getDatabase, ref, set } from 'firebase/database';
+
+  // Your Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyA1lno70d82bnOlBeb0ShRS-PW6cE4PAX8",
+    authDomain: "learnapp-683e9.firebaseapp.com",
+    projectId: "learnapp-683e9",
+    storageBucket: "learnapp-683e9.firebasestorage.app",
+    messagingSenderId: "989728103752",
+    appId: "1:989728103752:web:c0a228b0d2ef2e6cf3277d"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+
+  // Signup Form Handler
+  document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Get form values
+    const name = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim();
+    const password = document.getElementById('signupPassword').value;
+    const confirmPassword = document.getElementById('signupConfirmPassword').value;
+    const dob = document.getElementById('signupDob').value;
+    const avatarInput = document.querySelector('input[name="avatar"]:checked');
+    
+    // Validation
+    if (!name) {
+      alert('Please enter your full name!');
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+    
+    if (password.length < 6) {
+      alert('Password must be at least 6 characters!');
+      return;
+    }
+    
+    if (!avatarInput) {
+      alert('Please select an avatar!');
+      return;
+    }
+    
+    if (!dob) {
+      alert('Please select your date of birth!');
+      return;
+    }
+    
+    try {
+      // Show loading
+      const button = e.target.querySelector('button');
+      button.textContent = 'Creating Account...';
+      button.disabled = true;
+      
+      // Step 1: Create Firebase Auth user
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      // Step 2: Save complete profile to Database
+      await set(ref(db, `users/${user.uid}`), {
+        name: name,
+        username: name.split(' ')[0], // First name for "Hello, Aarav"
+        email: email,
+        dob: dob,
+        avatarUrl: avatarInput.value,
+        score: 0,
+        streak: 0,
+        badges: 0,
+        progress: {
+          math: 0,
+          word: 0,
+          science: 0,
+          logic: 0
+        },
+        createdAt: new Date().toISOString(),
+        lastActive: new Date().toISOString()
+      });
+      
+      console.log('Signup successful:', user.email, 'Data saved for:', name);
+      alert(`Welcome ${name}! Account created successfully. Please login.`);
+      window.location.href = 'login.html'; // Redirect to login as requested
+      
+    } catch (error) {
+      console.error('Signup error:', error);
+      
+      // Specific error messages
+      if (error.code === 'auth/email-already-in-use') {
+        alert('Email already exists! Please use a different email or login.');
+      } else if (error.code === 'auth/weak-password') {
+        alert('Password is too weak! Use at least 6 characters.');
+      } else if (error.code === 'auth/invalid-email') {
+        alert('Invalid email format!');
+      } else {
+        alert('Signup failed: ' + error.message);
+      }
+    } finally {
+      // Reset button
+      const button = e.target.querySelector('button');
+      button.textContent = 'Create Account';
+      button.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

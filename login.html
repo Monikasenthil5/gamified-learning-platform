@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Login | LearnFun</title>
+  <link rel="stylesheet" href="css/auth.css">
+  
+  <!-- Firebase CDN - COMPLETE SETUP -->
+  <script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js",
+      "firebase/database": "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js"
+    }
+  }
+  </script>
+</head>
+<body>
+<div class="auth-container">
+  <h2>🎮 Welcome Back!</h2>
+  <p>Login to continue your learning adventure</p>
+
+  <form id="loginForm">
+    <input type="email" id="loginEmail" placeholder="Email" required>
+    <input type="password" id="loginPassword" placeholder="Password" required>
+    <button type="submit">Login</button>
+  </form>
+
+  <p class="switch">
+    Don't have an account? <a href="signup.html">Sign up</a>
+  </p>
+</div>
+
+<script type="module">
+  // Firebase CDN Setup
+  import { initializeApp } from 'firebase/app';
+  import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+  import { getDatabase } from 'firebase/database';
+
+  // Your Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyA1lno70d82bnOlBeb0ShRS-PW6cE4PAX8",
+    authDomain: "learnapp-683e9.firebaseapp.com",
+    projectId: "learnapp-683e9",
+    storageBucket: "learnapp-683e9.firebasestorage.app",
+    messagingSenderId: "989728103752",
+    appId: "1:989728103752:web:c0a228b0d2ef2e6cf3277d"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+
+  // Login Form Handler
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    try {
+      // Show loading
+      const button = e.target.querySelector('button');
+      button.textContent = 'Logging in...';
+      button.disabled = true;
+      
+      // Login
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      
+      console.log('Login successful:', user.email);
+      window.location.href = 'home.html'; // Redirect to home
+    } catch (error) {
+      console.error('Login error:', error);
+      
+      // Error messages
+      let message = 'Login failed!';
+      if (error.code === 'auth/user-not-found') {
+        message = 'No account found with this email!';
+      } else if (error.code === 'auth/wrong-password') {
+        message = 'Wrong password!';
+      } else if (error.code === 'auth/invalid-email') {
+        message = 'Invalid email format!';
+      } else {
+        message = error.message;
+      }
+      
+      alert(message);
+    } finally {
+      // Reset button
+      const button = e.target.querySelector('button');
+      button.textContent = 'Login';
+      button.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

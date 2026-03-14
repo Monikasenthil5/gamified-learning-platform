@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>LearnFun</title>
+  <link rel="stylesheet" href="css/home.css">
+  
+  <!-- Firebase CDN -->
+  <script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js"
+    }
+  }
+  </script>
+</head>
+<body>
+
+<!-- Side Navigation -->
+<div id="sideNav" class="side-nav">
+  <a href="javascript:void(0)" class="close-btn" onclick="closeNav()">×</a>
+  <a href="home.html">🏠 Home</a>
+  <a href="courses.html">📘 Courses</a>
+  <a href="progress.html">📊 Progress</a>
+  <a href="profile.html" id="profileLink" style="display:none;">👤 Profile</a>
+  <a href="#" onclick="logoutUser()" id="logoutLink" style="display:none;">🚪 Logout</a>
+  <a href="login.html" id="loginLink">🔐 Login / Signup</a>
+  <a href="about.html">ℹ️ About Us</a>
+</div>
+
+<!-- Top Navigation -->
+<header class="top-nav">
+  <div class="left-nav">
+    <button class="menu-btn" onclick="toggleSideNav()">☰</button>
+    <h2>🎮 LearnFun</h2>
+  </div>
+
+  <nav class="top-links">
+    <a href="home.html">Home</a>
+    <a href="courses.html">Courses</a>
+    <a href="progress.html">Progress</a>
+    <a href="about.html">About</a>
+    
+    <!-- Dynamic Profile/Login Buttons -->
+    <a href="profile.html" class="profile-icon" id="topProfileIcon" style="display:none;">👤</a>
+    <button onclick="logoutUser()" id="topLogoutBtn" style="display:none;background:#FFD93D;border:none;padding:8px 14px;border-radius:20px;font-weight:bold;cursor:pointer;">Logout</button>
+    <button onclick="location.href='login.html'" id="topLoginBtn" style="background:#FFD93D;border:none;padding:8px 14px;border-radius:20px;font-weight:bold;cursor:pointer;">Sign Up / Login</button>
+  </nav>
+</header>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="carousel">
+    <img src="assets/images/carousel1.png" class="slide active">
+    <img src="assets/images/carousel2.png" class="slide">
+    <img src="assets/images/carousel3.png" class="slide">
+  </div>
+</section>
+
+<!-- Facts Grid -->
+<section class="grid-section">
+  <div class="card math">
+    <h3>🔢 Math Land</h3>
+    <video autoplay loop muted>
+      <source src="assets/videos/math.mp4" type="video/mp4">
+    </video>
+    <p>Did you know? Zero was invented in India 🇮🇳</p>
+  </div>
+
+  <div class="card science">
+    <h3>🔬 Science Space</h3>
+    <video autoplay loop muted>
+      <source src="assets/videos/science.mp4" type="video/mp4">
+    </video>
+    <p>Your brain works faster than a supercomputer!</p>
+  </div>
+
+  <div class="card logic">
+    <h3>🧩 Logic Cave</h3>
+    <video autoplay loop muted>
+      <source src="assets/videos/logic.mp4" type="video/mp4">
+    </video>
+    <p>Puzzles make your brain smarter and quicker!</p>
+  </div>
+</section>
+
+<script type="module">
+  // Firebase CDN Setup
+  import { initializeApp } from 'firebase/app';
+  import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+
+  // Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyA1lno70d82bnOlBeb0ShRS-PW6cE4PAX8",
+    authDomain: "learnapp-683e9.firebaseapp.com",
+    projectId: "learnapp-683e9",
+    storageBucket: "learnapp-683e9.firebasestorage.app",
+    messagingSenderId: "989728103752",
+    appId: "1:989728103752:web:c0a228b0d2ef2e6cf3277d"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // Auth state monitoring - updates UI instantly
+  onAuthStateChanged(auth, (user) => {
+    updateUI(user);
+  });
+
+  function updateUI(user) {
+    const isLoggedIn = !!user;
+    
+    // Side Navigation
+    document.getElementById('profileLink').style.display = isLoggedIn ? 'block' : 'none';
+    document.getElementById('logoutLink').style.display = isLoggedIn ? 'block' : 'none';
+    document.getElementById('loginLink').style.display = isLoggedIn ? 'none' : 'block';
+    
+    // Top Navigation
+    document.getElementById('topProfileIcon').style.display = isLoggedIn ? 'inline-block' : 'none';
+    document.getElementById('topLogoutBtn').style.display = isLoggedIn ? 'inline-block' : 'none';
+    document.getElementById('topLoginBtn').style.display = isLoggedIn ? 'none' : 'inline-block';
+    
+    console.log('Auth state changed:', isLoggedIn ? 'Logged in' : 'Logged out');
+  }
+
+  // Logout function
+  window.logoutUser = async function() {
+    try {
+      await signOut(auth);
+      window.location.href = 'home.html';
+    } catch (error) {
+      console.error('Logout error:', error);
+      alert('Logout failed. Please try again.');
+    }
+  };
+
+  // Your original carousel functionality
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+
+  function nextSlide() {
+    slides[currentSlide].classList.remove('active');
+    currentSlide = (currentSlide + 1) % slides.length;
+    slides[currentSlide].classList.add('active');
+  }
+
+  // Auto-rotate carousel
+  setInterval(nextSlide, 4000);
+
+  // Your original navigation functions
+  window.toggleSideNav = function() {
+    document.getElementById("sideNav").style.left = "0";
+  };
+
+  window.closeNav = function() {
+    document.getElementById("sideNav").style.left = "-260px";
+  };
+</script>
+</body>
+</html>

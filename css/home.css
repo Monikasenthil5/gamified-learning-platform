@@ -1,0 +1,212 @@
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: #F4FBFF;
+}
+
+/* Top Nav */
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #4DA8FF;
+  padding: 12px 20px;
+  color: white;
+}
+
+.left-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.menu-btn {
+  font-size: 26px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.top-links a {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.btn-signup {
+  background: #FFD93D;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+
+.top-nav a {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+}
+
+
+/* Side Navigation */
+.side-nav {
+  position: fixed;
+  top: 0;
+  left: -260px;          /* hidden initially */
+  width: 260px;
+  height: 100%;
+  background-color: #4DA8FF;
+  padding-top: 60px;
+  transition: left 0.3s ease;
+  z-index: 1000;
+  overflow-x: hidden;    /* IMPORTANT: hides icons */
+}
+
+.side-nav a {
+  padding: 12px 20px;
+  text-decoration: none;
+  font-size: 18px;
+  color: white;
+  display: block;
+}
+
+.side-nav a:hover {
+  background-color: rgba(255,255,255,0.2);
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.side-nav a:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+
+
+/* Menu Button */
+.menu-btn {
+  font-size: 28px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.hero {
+  position: relative;
+  height: 350px;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 0 0 30px 30px;
+}
+
+/* Background image / gif */
+.hero-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   /* VERY IMPORTANT */
+}
+
+/* Text over image */
+.hero-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: black;
+  background: transparent; /* dark overlay */
+  padding: 20px 40px;
+  border-radius: 20px;
+}
+
+.hero-content h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.hero-content p {
+  font-size: 18px;
+}
+
+
+/* Carousel Container */
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+/* Carousel Images */
+.carousel img {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  z-index: 1; /* make sure images are below text */
+}
+
+.carousel img.active {
+  opacity: 1;
+}
+
+
+.carousel img {
+  image-rendering: auto;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+
+
+
+.slide {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   /* 🔥 THIS IS THE KEY */
+  position: absolute;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.slide.active {
+  opacity: 1;
+}
+
+/* Grid */
+.grid-section {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 30px;
+}
+
+.card {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+}
+
+.card video {
+  width: 100%;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.math { border-top: 6px solid #6BCF9D; }
+.science { border-top: 6px solid #B39DDB; }
+.logic { border-top: 6px solid #FFD93D; }
